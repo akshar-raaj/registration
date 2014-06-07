@@ -15,7 +15,7 @@ It will allow users to register on a site.
 * On form POST:
     * Create User instance
     * People can write custom form which contains only subset of User fields. So that data needs to be properly saved. So assume form field names will map to User field names.
-* On successfule POST, redirect to a page saying User is registered.
+* On successful POST, redirect to a page saying User is registered.
 * Need a separate page which says User registered. This requires a view. Needs a template. Allow customising this template.
 
 ### Later
