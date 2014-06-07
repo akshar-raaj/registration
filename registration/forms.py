@@ -13,13 +13,23 @@ class RegistrationForm(forms.Form):
     username = forms.CharField(max_length=30, required=True)
     password1 = forms.CharField(label='Password', max_length=30, widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm password', max_length=30, widget=forms.PasswordInput)
+    email = forms.EmailField()
     
     def clean_username(self):
+        username = self.cleaned_data['username']
         try:
-            User.objects.get(username=self.cleaned_data['username'])
+            User.objects.get(username=username)
             raise forms.ValidationError("This username is taken")
         except User.DoesNotExist:
-            return self.cleaned_data['username']
+            return username
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        try:
+            User.objects.get(email=email)
+            raise forms.ValidationError("This email is taken")
+        except User.DoesNotExist:
+            return email
 
     def clean(self):
         if 'password1' in self.cleaned_data and 'password2' in self.cleaned_data:
