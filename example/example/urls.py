@@ -4,6 +4,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
+    url(r'^registration/', include('my_registration.urls')),
     url(r'^registration/', include('registration.urls')),
 
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
