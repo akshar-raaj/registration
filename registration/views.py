@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
 from .forms import RegistrationForm
+from .signals import registered
 
 
 def register(request, form_class=RegistrationForm,
@@ -14,6 +15,7 @@ def register(request, form_class=RegistrationForm,
         form = form_class(request.POST)
         if form.is_valid():
             process_registration_form(request, form)
+            registered.send(sender=User, request=request, form=form)
             return HttpResponseRedirect(reverse(redirect_url))
     data = {'registration_form': form}
     data.update(kwargs)

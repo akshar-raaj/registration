@@ -1,3 +1,7 @@
-from django.db import models
+from registration.signals import registered
 
-# Create your models here.
+
+def registration_callback(sender, **kwargs):
+    pass
+
+registered.connect(registration_callback)
