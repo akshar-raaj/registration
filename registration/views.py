@@ -5,6 +5,7 @@ from django.views.generic.edit import FormView
 
 from .forms import RegistrationForm
 from .signals import registered
+from .conf import REGISTRATION_MAKE_USER_INACTIVE
 
 
 class RegisterView(FormView):
@@ -31,7 +32,13 @@ class RegisterView(FormView):
             if field in user_fields:
                 user_data[field] = value
         user = User.objects.create_user(**user_data)
+        self.change_user_is_active(user)
         return user
+
+    def change_user_is_active(self, user):
+        if REGISTRATION_MAKE_USER_INACTIVE:
+            user.is_active = False
+            user.save()
 
 
 def register_done(request, template_name='registration/register_done.html',
