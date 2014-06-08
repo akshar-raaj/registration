@@ -14,8 +14,8 @@ class RegisterView(FormView):
 
     def form_valid(self, form):
         # A valid form is POSTed
-        self.process_registration_form(self.request, form)
-        registered.send(sender=User, request=self.request, form=form)
+        user = self.process_registration_form(self.request, form)
+        registered.send(sender=User, request=self.request, form=form, user=user)
         return super(RegisterView, self).form_valid(form)
 
     def process_registration_form(self, request, form):
