@@ -13,7 +13,8 @@ class RegistrationForm(forms.Form):
     username = forms.CharField(max_length=30, required=True)
     password = forms.CharField(label='Password', max_length=30, widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm password', max_length=30, widget=forms.PasswordInput)
-    email = forms.EmailField()
+    # We don't allow multiple users with same email
+    email = forms.EmailField(blank=True)
     
     def clean_username(self):
         username = self.cleaned_data['username']
