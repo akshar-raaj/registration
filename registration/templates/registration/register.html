@@ -1,7 +1,7 @@
 <form method="POST" action=".">
     {% csrf_token %}
     <table>
-    {{registration_form.as_table}}
+    {{form.as_table}}
     </table>
     <input type="SUBMIT" value="Register"/>
 </form>
