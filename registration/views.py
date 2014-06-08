@@ -33,8 +33,6 @@ class RegisterView(FormView):
         user = User.objects.create_user(**user_data)
         return user
 
-register = RegisterView.as_view()
-
 
 def register_done(request, template_name='registration/register_done.html',
                   **kwargs):
