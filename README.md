@@ -2,6 +2,11 @@
 
 It will allow users to register on a site.
 
+### Why?
+
+I wanted to learn writing reusable apps and what are the considerations to be made while writing reusable apps.
+Once I write this, I will compare this to django-registration, the most widely app used for registration, and would learn where I went wrong and what I could have done differently.
+
 ### How?
 
 * When users register, a User instance will be created in the database.
