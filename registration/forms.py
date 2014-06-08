@@ -13,8 +13,9 @@ class RegistrationForm(forms.Form):
     username = forms.CharField(max_length=30, required=True)
     password = forms.CharField(label='Password', max_length=30, widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm password', max_length=30, widget=forms.PasswordInput)
-    # We don't allow multiple users with same email
-    email = forms.EmailField(blank=True)
+    # Email is not required.
+    # But if provided, it should not match any existing user's email
+    email = forms.EmailField(required=False)
     
     def clean_username(self):
         username = self.cleaned_data['username']
@@ -26,11 +27,18 @@ class RegistrationForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        try:
-            User.objects.get(email=email)
-            raise forms.ValidationError("This email is taken")
-        except User.DoesNotExist:
-            return email
+        """
+        email is a non-required field.
+        So, it's value could be an empty string when control reaches here
+        So, we need to check it's non-empty before we check for duplicity
+        """
+        if email:
+            try:
+                User.objects.get(email=email)
+                raise forms.ValidationError("This email is taken")
+            except User.DoesNotExist:
+                return email
+        return email
 
     def clean(self):
         if 'password' in self.cleaned_data and 'password2' in self.cleaned_data:
