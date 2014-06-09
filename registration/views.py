@@ -6,9 +6,19 @@ from django.views.generic.edit import FormView
 from .forms import RegistrationForm
 from .signals import registered
 from .conf import REGISTRATION_MAKE_USER_INACTIVE
+from .models import ActivationKey
 
 
 class RegisterView(FormView):
+    """
+    This is the default view with the most basic workflow.
+    This uses a Form, which will have the same field names as 
+    field name on model User.
+    The form can have extra fields too, i.e non-User fields.
+    A User is created with the POSTed data and this view
+    optionally provides settings user as active or inactive.
+    We will write a separate view which can handle email verification.
+    """
     template_name = 'registration/register.html'
     form_class = RegistrationForm
     success_url = reverse_lazy('registration_register_done')
@@ -26,19 +36,48 @@ class RegisterView(FormView):
         Valid POSTed form
         Creates a User instance with POSTed form
         """
+        user = self.create_user(request, form)
+        self.change_user_is_active(user)
+        return user
+
+    def create_user(self, request, form):
+        """
+        Creates a User instance with POSTed form
+        """
         user_data = {}
         user_fields = [f.name for f in User._meta.fields]
         for field, value in form.cleaned_data.items():
             if field in user_fields:
                 user_data[field] = value
-        user = User.objects.create_user(**user_data)
-        self.change_user_is_active(user)
-        return user
+        return User.objects.create_user(**user_data)
 
     def change_user_is_active(self, user):
         if REGISTRATION_MAKE_USER_INACTIVE:
             user.is_active = False
             user.save()
+
+class RegisterAndSendEmailVerificationView(RegisterView):
+    """
+    This view would use a registration form.
+    The form **must** have an email field to which
+    the verification link can be sent.
+    """
+
+    def process_registration_form(self, request, form):
+        user = super(RegisterAndSendEmailVerificationView, self).process_registration_form(request, form)
+        # Send an activation link to this user
+        ActivationKey.objects.send_activation_email(user)
+        # We allow customizing the mail subject
+        # and mail body
+        return user
+
+    def change_user_is_active(self, user):
+        """
+        If an email verification link is being sent,
+        you must be wanting to set the user inactive initially.
+        """
+        user.is_active = False
+        user.save()
 
 
 def register_done(request, template_name='registration/register_done.html',
