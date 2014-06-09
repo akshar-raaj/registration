@@ -75,6 +75,8 @@ class RegisterAndSendEmailVerificationView(RegisterView):
         """
         If an email verification link is being sent,
         you must be wanting to set the user inactive initially.
+        If you don't want this behaviour, subclass this view
+        and override this method.
         """
         user.is_active = False
         user.save()
