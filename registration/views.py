@@ -25,22 +25,21 @@ class RegisterView(FormView):
 
     def form_valid(self, form):
         # A valid form is POSTed
-        user = self.process_registration_form(self.request, form)
+        user = self.process_registration_form(form)
         registered.send(sender=User, request=self.request, form=form, user=user)
         return super(RegisterView, self).form_valid(form)
 
-    def process_registration_form(self, request, form):
+    def process_registration_form(self, form):
         """
         Expects following arguments:
-        request: HttpRequest instance
         Valid POSTed form
         Creates a User instance with POSTed form
         """
-        user = self.create_user(request, form)
+        user = self.create_user(form)
         self.change_user_is_active(user)
         return user
 
-    def create_user(self, request, form):
+    def create_user(self, form):
         """
         Creates a User instance with POSTed form
         """
@@ -63,8 +62,8 @@ class RegisterAndSendEmailVerificationView(RegisterView):
     the verification link can be sent.
     """
 
-    def process_registration_form(self, request, form):
-        user = super(RegisterAndSendEmailVerificationView, self).process_registration_form(request, form)
+    def process_registration_form(self, form):
+        user = super(RegisterAndSendEmailVerificationView, self).process_registration_form(form)
         # Send an activation link to this user
         ActivationKey.objects.send_activation_email(user)
         # We allow customizing the mail subject
