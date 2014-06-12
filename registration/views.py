@@ -16,7 +16,7 @@ class RegisterView(FormView):
     field name on model User.
     The form can have extra fields too, i.e non-User fields.
     A User is created with the POSTed data and this view
-    optionally provides settings user as active or inactive.
+    optionally provides setting user as active or inactive.
     We will write a separate view which can handle email verification.
     """
     template_name = 'registration/register.html'
